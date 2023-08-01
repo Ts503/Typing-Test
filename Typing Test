@@ -1,0 +1,72 @@
+import random
+import time
+import tkinter as tk
+from tkinter import messagebox
+
+def start_game():
+    global start_time, current_text, correct_words
+    if not start_time:
+        start_time = time.time()
+        correct_words = 0
+        display_text()
+        entry.focus_set()
+
+def display_text():
+    global current_text
+    current_text = random.choice(word_list)
+    label.config(text=current_text)
+
+def check_input(event):
+    global current_text, start_time, correct_words
+    user_input = entry.get().strip()
+
+    if current_text == user_input:
+        correct_words += 1
+
+    if correct_words == num_words:
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        words_per_minute = (correct_words / elapsed_time) * 60
+        accuracy = (correct_words / num_words) * 100
+
+        messagebox.showinfo("Results", f"Time: {elapsed_time:.2f}s\nSpeed: {words_per_minute:.2f} words per minute\nAccuracy: {accuracy:.2f}%")
+
+        start_time = 0
+        entry.delete(0, tk.END)
+        correct_words = 0
+        display_text()
+    else:
+        entry.delete(0, tk.END)
+        display_text()
+
+word_list = ["Hello", "Good Morning", "Architect", "Name", "Go", "Learning", "Codeclause"]
+
+num_words = 3
+
+start_time = 0
+current_text = ""
+correct_words = 0
+
+root = tk.Tk()
+root.title("Speed Typing Test")
+root.geometry("600x400")
+
+bg_color = "#2C3E50"
+fg_color = "#FFFFFF"
+entry_bg = "#34495E"
+
+root.config(bg=bg_color)
+
+label = tk.Label(root, text="", font=("Helvetica", 20), bg=bg_color, fg=fg_color)
+label.pack(pady=20)
+
+entry = tk.Entry(root, font=("Helvetica", 16), bg=entry_bg, fg=fg_color)
+entry.pack(pady=10)
+entry.bind("<Return>", check_input)
+
+start_button = tk.Button(root, text="Start Test", command=start_game, bg=bg_color, fg=fg_color, bd=0, activebackground=bg_color)
+start_button.pack(pady=10)
+
+root.mainloop()
+
+
